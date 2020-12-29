@@ -154,7 +154,7 @@ void sha256_final(SHA256_CTX *ctx, BYTE hash[])
 
 }
 
-void sha256_main(BYTE text[],int size_of_text,BYTE buf[SHA256_BLOCK_SIZE]) // 传入字符数组  以及接受数组
+void sha256_main(BYTE text[],size_t size_of_text,BYTE buf[SHA256_BLOCK_SIZE]) // 传入字符数组  以及接受数组
 {
 //    printf("SHA-256 tests: %s\n", sha256_test() ? "SUCCEEDED" : "FAILED");
     SHA256_CTX ctx;

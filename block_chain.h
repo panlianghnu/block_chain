@@ -22,7 +22,7 @@ typedef union{
 } block_chain_head;
 
 typedef struct{
-    char body[10000];
+    char body[1000];
 } block_chain_body;
 
 typedef struct{
@@ -32,5 +32,7 @@ typedef struct{
 
 void test(void);
 void printBlockHead(block_chain_head* head);
-void init();
+void init(void);
+block find_last_block(void);
+void read_block(block *blockitem,const char* filename);
 #endif /* block_chain_h */
