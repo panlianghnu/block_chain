@@ -14,7 +14,7 @@
 typedef union{
     unsigned char byte[104];
     struct{
-        unsigned char sha_all[32];
+        unsigned char sha_all[32];       // 256 bit sha_all
         unsigned long nonce;             // 64 bit nonce
         unsigned char sha_prev[32];      // 256 bit sha_prev
         unsigned char sha_block[32];     // 256 bit sha_block

@@ -284,5 +284,28 @@ int check_block_chain(){
             return 0;
         }
     }
+    for (i=0;i<size;i++) {  // 计算 SHA256 匹配不上则区块链不合法
+        // 计算 SHA_ALL
+        BYTE text[10200];
+        read_head_body(text,&block_list[i].head,block_list[i].body);
+        BYTE buf[SHA256_BLOCK_SIZE];
+        size_t size_of_text = sizeof(block_chain_head)-32 + strlen(block_list[i].body.body);
+        sha256_main(text,size_of_text,buf);
+        int j;
+        for (j=0;j<SHA256_BLOCK_SIZE;j++) {
+            if (buf[j] != block_list[i].head.sha_all[j]) {
+                return 0;
+            }
+        }
+        // 计算 SHA_BLOCK
+        BYTE buf1[SHA256_BLOCK_SIZE];
+        size_t size_of_buf1 = strlen(block_list[i].body.body);
+        sha256_main(block_list[i].body.body, size_of_buf1,buf1);
+        for (j=0;j<SHA256_BLOCK_SIZE;j++) {
+            if (buf1[j] != block_list[i].head.sha_block[j]) {
+                return 0;
+            }
+        }
+    }
     return 1;
 }
