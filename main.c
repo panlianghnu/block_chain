@@ -12,9 +12,8 @@
 #include <string.h>
 
 int main(int argc, const char * argv[]) {
-    // init(); //生成创世纪块
-    block last = find_last_block();
-    printBlockHead(&last.head);
-    printf("body:%s\n",last.body.body);
+    //init(); //生成创世纪块
+    char block_name[200] = "block_two";
+    new_block(block_name,"这是创世纪块后的第二个块！");
     return 0;
 }

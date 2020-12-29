@@ -199,3 +199,47 @@ block find_first_block(){
     }
     return tmp;
 }
+
+void new_block(const char* block_name ,char* content){ // 和 init 类似，在末尾添加
+    block last_block = find_last_block();
+    
+    block_chain_head* genesis = malloc(sizeof(block_chain_head));
+    block_chain_body genesis_body;
+    strcpy(genesis_body.body,content);
+    memset(genesis->byte,0,sizeof(block_chain_head));    // 先将区块头全部初始化为0
+    int i;
+    for (i=0;i<SHA256_BLOCK_SIZE;i++) {
+        genesis->sha_prev[i] = last_block.head.sha_all[i];  // 写入 sha_prev
+    }
+    sha256_main(genesis_body.body,sizeof(genesis_body.body),genesis->sha_block); // sha_block
+    // 随机 nonce ，对(块头+块体)再次哈希
+    printf("开始随机nonce\n");
+    while (genesis->nonce < 0xffffffffffffffff) {
+        // 把块头块体 读入一个 BYTE 数组
+        BYTE text[10200];
+        read_head_body(text,genesis,genesis_body);
+        BYTE buf[SHA256_BLOCK_SIZE];
+        size_t size_of_text = sizeof(block_chain_head)-32 + strlen(genesis_body.body);
+        sha256_main(text,size_of_text,buf);    // 计算 sha256   有bug??? (已解决)
+        // 当text 含有 '\0' 时，出现bug
+        // 所以添加变量 size_of_text (注意要减去32 sha_all)
+        printf("当前nonce为: %lu     ",genesis->nonce);
+        printf("前8bit为:%02x\n",buf[0]);
+        if (check_sha(buf)) {   // 检查是否为前导0
+            printf("新区块nonce为: %lu\n",genesis->nonce);
+            const char* filename = strcat(block_name, ".block");
+            FILE *fp = fopen(filename,"w");
+            for (i=0;i<SHA256_BLOCK_SIZE;i++) {
+                genesis->sha_all[i] = buf[i];
+            }
+            for (i=0;i<sizeof(block_chain_head);i++) {   // 写入区块头
+                fprintf(fp,"%c",genesis->byte[i]);
+            }
+            for (i=0;i<strlen(genesis_body.body);i++) {  // 写入区块体
+                fprintf(fp,"%c",genesis_body.body[i]);
+            }
+            break;
+        }
+        genesis->nonce++;
+    }
+}

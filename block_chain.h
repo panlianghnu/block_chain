@@ -35,4 +35,5 @@ void printBlockHead(block_chain_head* head);
 void init(void);
 block find_last_block(void);
 void read_block(block *blockitem,const char* filename);
+void new_block(const char* block_name,char* content);
 #endif /* block_chain_h */
