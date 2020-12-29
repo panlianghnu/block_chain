@@ -243,3 +243,46 @@ void new_block(const char* block_name ,char* content){ // 和 init 类似，在�
         genesis->nonce++;
     }
 }
+
+int check_block_chain(){
+    block block_list[100];
+    const char *filePath = ".";
+    int size = read_dir_block(block_list,filePath);   // 一共 size 个区块
+    // 给所有区块弄一个拓扑排序
+    if (size <= 0) {         // 文件夹下没有区块， 不合法
+        printf("no block file\n");
+        return 0;
+    }
+    // 先找第一个 block
+    block topo[size];
+    BYTE hash[SHA256_BLOCK_SIZE] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+    int i,j;
+    for (i=0;i<size;i++) {
+        int cmp = memcmp(hash,block_list[i].head.sha_prev,SHA256_BLOCK_SIZE);
+        if(cmp == 0){   // equal， this is the first block
+            copy(&topo[0],&block_list[i]);
+            break;
+        }
+    }
+    if (topo[0].head.nonce == 0) {   // 没找到创世纪块   区块链不合法
+        return 0;
+    }
+    // topo[0] 为创世纪块
+    int flag=0;
+    for (i=1;i<size;i++) {
+        flag=0;
+        for (j=0;j<size;j++) {
+            int cmp = memcmp(topo[i-1].head.sha_all,block_list[j].head.sha_prev,SHA256_BLOCK_SIZE);
+            // 遍历所有区块，找到 prev == topo[i-1] 的，以此来确定 topo[i]
+            if (cmp == 0) {
+                copy(&topo[i],&block_list[j]);
+                flag = 1;
+                break;
+            }
+        }
+        if (!flag) {   // 此次循环，找不到一个区块指向上一个区块，区块链不合法
+            return 0;
+        }
+    }
+    return 1;
+}
