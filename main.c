@@ -13,7 +13,9 @@
 
 int main(int argc, const char * argv[]) {
     //init(); //生成创世纪块
-    char block_name[200] = "block_two";
-    new_block(block_name,"这是创世纪块后的第二个块！");
+//    char block_name[200] = "block_two";
+//    new_block(block_name,"这是创世纪块后的第二个块！");
+    unsigned long max = 0xffffffffffffffff;
+    printf("%lu\n",max);
     return 0;
 }

@@ -72,7 +72,7 @@ void init(){    // 创建创世纪块
     block_chain_head* genesis = malloc(sizeof(block_chain_head));
     block_chain_body genesis_body;
     strcpy(genesis_body.body,"hello world");
-    memset(genesis->byte,0,sizeof(block_chain_head));    // 先将区块头96字节全部初始化为0
+    memset(genesis->byte,0,sizeof(block_chain_head));    // 先将区块头字节全部初始化为0
     sha256_main(genesis_body.body,sizeof(genesis_body.body),genesis->sha_block);   // 哈希body
     // 随机 nonce ，对(块头+块体)再次哈希
     printf("开始随机nonce\n");
